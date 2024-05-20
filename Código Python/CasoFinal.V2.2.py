@@ -58,24 +58,36 @@ class ListaDeTareas:
             print("No hay tareas en la lista.")
             return
 
-        # Ordenar las tareas por prioridad
-        prioridades = {'alta': 1, 'media': 2, 'baja': 3}
-        tareas_ordenadas = sorted(self.tareas, key=lambda x: (prioridades[x.prioridad], x.fecha_limite))
-
-        print("Tareas ordenadas por prioridad:")
-        for i, tarea in enumerate(tareas_ordenadas):
-            print(f"{i}. {tarea}\n")
-
-        # Mostrar las tareas próximas a la fecha límite y las que la han pasado
         hoy = datetime.now().strftime("%Y-%m-%d")
-        proximas_tareas = [tarea for tarea in tareas_ordenadas if tarea.fecha_limite <= hoy]
+        pendientes = [tarea for tarea in self.tareas if not tarea.completada and tarea.fecha_limite > hoy]
+        proximas_o_pasadas = [tarea for tarea in self.tareas if not tarea.completada and tarea.fecha_limite <= hoy]
+        completadas = [tarea for tarea in self.tareas if tarea.completada]
 
-        if proximas_tareas:
-            print("Tareas próximas a la fecha límite o pasadas:")
-            for i, tarea in enumerate(proximas_tareas):
-                print(f"{i}. {tarea}\n")
+        print("Tareas pendientes ordenadas por prioridad:")
+        if pendientes:
+            prioridades = {'alta': 1, 'media': 2, 'baja': 3}
+            pendientes_ordenadas = sorted(pendientes, key=lambda x: (prioridades[x.prioridad], x.fecha_limite))
+            for tarea in pendientes_ordenadas:
+                indice = self.tareas.index(tarea)
+                print(f"{indice}. {tarea}\n")
+        else:
+            print("No hay tareas pendientes.")
+
+        print("Tareas próximas a la fecha límite o pasadas:")
+        if proximas_o_pasadas:
+            for tarea in proximas_o_pasadas:
+                indice = self.tareas.index(tarea)
+                print(f"{indice}. {tarea}\n")
         else:
             print("No hay tareas próximas a la fecha límite o que la hayan pasado.")
+
+        print("Tareas completadas:")
+        if completadas:
+            for tarea in completadas:
+                indice = self.tareas.index(tarea)
+                print(f"{indice}. {tarea}\n")
+        else:
+            print("No hay tareas completadas.")
 
     def eliminar_tarea(self, indice):
         """Elimina una tarea de la lista dado su índice."""
